@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#020617">
-    <title>SmartDiet - Eclipse Pro</title>
+    <title>Optimal Diet Planner</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* =========================================
@@ -76,7 +76,7 @@
         .input-card { padding: 40px; min-height: 500px; display: flex; flex-direction: column; justify-content: center;}
         .input-card-wrapper { max-width: 650px; margin: 20px auto; }
         
-        .brand-logo { font-size: 2.5em; font-weight: 800; margin-bottom: 5px; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -1px; display: inline-block; }
+        .brand-logo { font-size: 2.2em; font-weight: 800; margin-bottom: 5px; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; display: inline-block; }
         .auth-input, .form-control { width: 100%; padding: 16px 20px; margin-bottom: 15px; background: var(--bg-input); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; color: white; font-size: 1em; transition: 0.3s; font-family: inherit; }
         .auth-input:focus, .form-control:focus { border-color: #a855f7; box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2); outline: none; background: rgba(30, 41, 59, 0.8); }
         
@@ -145,7 +145,7 @@
         .btn-night { border-left: 6px solid #818cf8; background: linear-gradient(90deg, rgba(129, 140, 248, 0.1), rgba(30, 41, 59, 0.6)); }
 
         /* =========================================
-           3. VERTICAL FOOD LIST (NEW STYLE)
+           3. VERTICAL FOOD LIST
            ========================================= */
         .food-list-container { display: flex; flex-direction: column; gap: 15px; max-width: 800px; margin: 0 auto; }
         .food-card-horizontal {
@@ -212,6 +212,18 @@
         .close-btn:hover { background: #ef4444; transform: rotate(90deg); }
         .modal-img-banner { width: 100%; height: 250px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
+        /* PORTION GUIDE BOX */
+        .portion-box {
+            background: rgba(59, 130, 246, 0.08); 
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         @media (min-width: 2000px) { body { font-size: 1.3rem; } .container { max-width: 1800px; } .food-grid { grid-template-columns: repeat(4, 1fr) !important; } }
         @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr !important; } .stats-row { flex-direction: column; align-items: center; } .food-grid { grid-template-columns: 1fr !important; } .modal-grid { grid-template-columns: 1fr !important; } .option-grid { grid-template-columns: 1fr; } .food-card-horizontal { flex-direction: column; text-align: center; } .horizontal-actions { flex-direction: row; } }
     </style>
@@ -221,7 +233,7 @@
 
     <div id="auth-screen">
         <div id="login-form" class="auth-card fade-in">
-            <div class="brand-logo">SmartDiet.</div>
+            <div class="brand-logo">Optimal Diet Planner.</div>
             <p style="color:var(--text-muted); margin-bottom:30px;">Universal Health Monitor</p>
             <input type="email" id="login-email" class="auth-input" placeholder="Email Address">
             <input type="password" id="login-pass" class="auth-input" placeholder="Password">
@@ -243,7 +255,7 @@
     <div id="app-screen" class="container hidden">
         <header class="header fade-in">
             <div style="display:flex; align-items:center; gap:20px;">
-                <div class="brand-logo" style="font-size:1.5em; margin:0;">SmartDiet.</div>
+                <div class="brand-logo" style="font-size:1.5em; margin:0;">Optimal Diet Planner.</div>
                 <nav style="display:flex; gap:5px;">
                     <div class="nav-pill active" onclick="navTo('planner', this)">Planner</div>
                     <div class="nav-pill" onclick="navTo('dashboard', this)">Progress</div>
@@ -382,10 +394,34 @@
         <div class="modal-box">
             <button class="close-btn" onclick="closeModal()">×</button>
             <img id="modal-img" src="" class="modal-img-banner">
+            
             <h2 id="modal-title" style="font-size:2.5em; font-weight:800; margin-bottom:5px; line-height:1.1;">Dish Name</h2>
             <div style="display:flex; gap:15px; margin-bottom:20px;">
                 <span id="modal-cal" style="color:#a5b4fc; font-weight:700; font-size:1.1em;">300 kcal</span>
                 <span id="modal-time" style="color:#10b981; font-weight:700; font-size:1.1em;">⏱ 20 Mins</span>
+            </div>
+
+            <!-- NEW PORTION GUIDE SECTION -->
+            <div class="portion-box">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="color:#3b82f6; font-size:0.9em; text-transform:uppercase; letter-spacing:1px; font-weight:800;">Target & Serving Size</h3>
+                    <span style="font-size:0.8em; color:var(--text-muted);">Calorie Target for <span id="modal-meal-name">Meal</span></span>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                    <div>
+                        <div style="font-size:1.6em; font-weight:800; color:white; line-height:1.2;">
+                            <span id="modal-servings" style="color:#f472b6;">2.5</span> Servings
+                        </div>
+                        <div style="font-size:0.95em; color:var(--text-muted);">
+                            Total <span id="modal-total-grams" style="color:white; font-weight:700;">500</span>g to reach <span id="modal-meal-target" style="color:white; font-weight:700;">600</span> kcal
+                        </div>
+                    </div>
+                    <div style="text-align:right; font-size:0.85em; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:10px;">
+                        <div>1 Serving =</div>
+                        <div style="font-weight:700; color:white; font-size:1.2em;"><span id="modal-one-gram">200</span>g</div>
+                    </div>
+                </div>
             </div>
             
             <div class="modal-grid">
@@ -957,12 +993,65 @@
             }
         }
 
+        // --- NEW FUNCTIONS FOR SERVING SIZE LOGIC ---
+
+        function estimateServingGrams(name) {
+            const n = name.toLowerCase();
+            // Heavy meals (Rice/Biryani/Heavy Curries)
+            if(n.includes('rice') || n.includes('biryani') || n.includes('pulao')) return 300;
+            if(n.includes('curry') || n.includes('dal') || n.includes('gravy') || n.includes('chole') || n.includes('rajma')) return 250;
+            
+            // Breads (Roti/Paratha/Thepla) - usually 2 pieces approx
+            if(n.includes('roti') || n.includes('chapati') || n.includes('paratha') || n.includes('naan') || n.includes('thepla')) return 120;
+            
+            // Breakfast items
+            if(n.includes('idli')) return 150; // 3-4 idlis
+            if(n.includes('dosa') || n.includes('cheela') || n.includes('chilla')) return 120;
+            if(n.includes('upma') || n.includes('poha') || n.includes('pongal')) return 200;
+            if(n.includes('oats') || n.includes('porridge') || n.includes('muesli') || n.includes('corn flakes')) return 250;
+            
+            // Light/Snacks
+            if(n.includes('sandwich')) return 180;
+            if(n.includes('salad') || n.includes('bowl')) return 250;
+            if(n.includes('soup')) return 250; // ml treated as g roughly
+            if(n.includes('egg')) return 120; // 2 eggs + sides
+            if(n.includes('toast')) return 100;
+            if(n.includes('shake') || n.includes('smoothie')) return 300; // ml
+            
+            return 250; // Default Average
+        }
+
         function openRecipe(name, cal, time, imgUrl) {
             const data = getRecipe(name);
+            const dailyTarget = state.target || 2000;
+            const currentMeal = state.currentMeal || 'Morning';
+            
+            // Calculate Meal Specific Target
+            let ratio = 0.3; // Default
+            if(currentMeal === 'Morning') ratio = 0.25;      // 25% for Breakfast
+            if(currentMeal === 'Afternoon') ratio = 0.40;    // 40% for Lunch
+            if(currentMeal === 'Night') ratio = 0.35;        // 35% for Dinner
+
+            const mealTarget = Math.round(dailyTarget * ratio);
+            
+            // Calculate Servings
+            const servingGrams = estimateServingGrams(name);
+            const servingsNeeded = (mealTarget / cal).toFixed(1);
+            const totalGrams = Math.round(servingsNeeded * servingGrams);
+
+            // Populate Modal
             document.getElementById('modal-title').innerText = name;
-            document.getElementById('modal-cal').innerText = cal + " kcal";
+            document.getElementById('modal-cal').innerText = cal + " kcal/serving";
             document.getElementById('modal-time').innerText = "⏱ " + time;
             document.getElementById('modal-img').src = imgUrl;
+            
+            // Populate New Portion Guide
+            document.getElementById('modal-meal-name').innerText = currentMeal;
+            document.getElementById('modal-meal-target').innerText = mealTarget;
+            document.getElementById('modal-servings').innerText = servingsNeeded;
+            document.getElementById('modal-total-grams').innerText = totalGrams;
+            document.getElementById('modal-one-gram').innerText = servingGrams;
+
             document.getElementById('modal-ing').innerHTML = data.ing.map(i => `<li>${i}</li>`).join('');
             document.getElementById('modal-steps').innerHTML = data.step.map(s => `<li>${s}</li>`).join('');
             document.getElementById('modal-yt').href = `https://www.youtube.com/results?search_query=how+to+cook+${encodeURIComponent(name)}`;
